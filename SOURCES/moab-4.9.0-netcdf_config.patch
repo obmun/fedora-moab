@@ -1,0 +1,33 @@
+From f856ba30b80f5f2746e6b8ed73f6dee5ca4e7f09 Mon Sep 17 00:00:00 2001
+From: Jacobo Cabaleiro <obmun.h@gmail.com>
+Date: Sat, 2 Apr 2016 19:21:10 +0100
+Subject: [PATCH] config: fix netcdf detection
+
+Default AC_PATH_PROG path arg, set to $PATH, is uncoditionally replaced by
+the var set from the AC_PATH_PROG, which without the optional arg from
+user is just "yes". Therefore, no valid path for locating nc-config exec
+is given.
+
+I'm aware this m4 macro has been changed in 4.9.1 (eaf1a06), but this
+version has not been officially packaged, released or even tagged yet in
+the repo.
+---
+ config/netcdf.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/netcdf.m4 b/config/netcdf.m4
+index b8cdd44..5880ecd 100644
+--- a/config/netcdf.m4
++++ b/config/netcdf.m4
+@@ -86,7 +86,7 @@ if test "xno" != "x$NETCDF_ARG"; then
+     fi
+   fi
+  
+-  AC_PATH_PROG([NC_CONFIG], [nc-config], [no], [${NETCDF_ARG}/bin])
++  AC_PATH_PROG([NC_CONFIG], [nc-config], [no], [${NETCDF_ARG}/bin:${PATH}])
+   if test "$NC_CONFIG" != "no" ; then
+     NETCDF_CPPFLAGS="`$NC_CONFIG --cflags`"
+     NETCDF_LDFLAGS="`$NC_CONFIG --libs`"
+-- 
+2.5.5
+
